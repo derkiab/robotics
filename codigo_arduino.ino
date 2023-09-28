@@ -1,59 +1,138 @@
+#include <Servo.h>
+
+//Declaración de pins a utilizar
+//Sensores infrarrojos
 int ir1 = 34;
 int ir2 =35;
+
+//Dual motor
 int e1 = 2;
 int m1 = 50;
 int e2 = 3;
 int m2 = 52;
 
-void adelante(){
+//Ultrasonido
+int trig = 28;
+int echo = 29;
+
+//Servo motor
+Servo myServo;
+
+//LED
+int green = 41;
+int red = 40;
+
+void adelante(){ //Función que hará que el robot avance hacia adelante
+  digitalWrite(red, LOW);
+  digitalWrite(green, HIGH);
+  
   digitalWrite(m1, HIGH);
   digitalWrite(m2, HIGH);
-  analogWrite(e1, 85);
-  analogWrite(e2, 85);
+  analogWrite(e1, 150);
+  analogWrite(e2, 150);
 }
-void izquierda(){
+void izquierda(){ //Función que hará que el robot gire a la izquierda
+  digitalWrite(red, LOW);
+  digitalWrite(green, HIGH);
+  
   digitalWrite(m1, LOW);
   digitalWrite(m2, LOW);
-  analogWrite(e1, 110);
+  analogWrite(e1, 150);
   analogWrite(e2, LOW);
 }
-void derecha(){
+void derecha(){ //Función que hará que el robot gire hacia la derecha
+  digitalWrite(red, LOW);
+  digitalWrite(green, HIGH);
+  
   digitalWrite(m1, LOW);
   digitalWrite(m2, LOW);
   analogWrite(e1, LOW);
-  analogWrite(e2, 110);
+  analogWrite(e2, 150);
+  
+}
+void detener(){ //Función que hará que el robot gire hacia la derecha
+  digitalWrite(red, LOW);
+  digitalWrite(green, HIGH);
+  
+  digitalWrite(m1, LOW);
+  digitalWrite(m2, LOW);
+  analogWrite(e1, LOW);
+  analogWrite(e2, LOW);
   
 }
 
 void setup() {
-  // put your setup code here, to run once:
+  // Configuración de parámetros iniciales del robot
   Serial.begin(9600);
   pinMode(ir1, INPUT);
   pinMode(ir2, INPUT);
   pinMode(e1, OUTPUT);
   pinMode(e2, OUTPUT);
+  pinMode(trig, OUTPUT);
+  pinMode(echo, INPUT);
+  pinMode(green, OUTPUT);
+  pinMode(red, OUTPUT);
+  myServo.attach(24);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  int left = digitalRead(ir1);
-  int right = digitalRead(ir2);
-  //Serial.print(left);
-  //Serial.print(" ");
-  //Serial.println(right);
-  if(left==0 && right ==0){
-    Serial.println("adelante");
-    adelante();
+  //Acciones a ejecutar por el robot
+  int left = digitalRead(ir1); //Estado del sensor infrarrojo izquierdo
+  int right = digitalRead(ir2); //Estado del sensor infrarrojo derecho
+  digitalWrite(trig, LOW);
+  delayMicroseconds(3);
+  digitalWrite(trig, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trig, LOW);
 
-  }else if(left ==1 && right==0){
+  float tiempo = pulseIn(echo, HIGH);
+  tiempo= tiempo/2;
+  float distancia = tiempo/29.2;
+  Serial.println(distancia);
+  if(left==0 && right ==0){ //Detección de si el robot se encuentra en la línea
+    if(distancia < 10){
+      detener();
+      digitalWrite(red, HIGH);
+      digitalWrite(green, LOW);
+      int i;
+      for(i=0; i<180; i+=20){
+        myServo.write(i);
+        delay(500);
+      }
+
+      for(i=180; i>0; i-=20){
+        myServo.write(i);
+        delay(500);
+      }
+    }else{
+      Serial.println("adelante");
+      adelante();
+    }
+
+  }else if(left ==1 && right==0){ //Detección de si el robot se encuentra a la derecha de la línea
     Serial.println("izquierda");
     izquierda();
-    delay(500);
-  }else if(left == 0 && right==1){
+    delay(300);
+  }else if(left == 0 && right==1){ //Detección de si el robot se encuentra a la izquierda de la línea
     Serial.println("derecha");
     derecha();
+    delay(300);
+  }
+
+  
+
+  /*int i;
+  for(i=0; i<180; i+=5){
+    myServo.write(i);
     delay(500);
   }
+
+  for(i=180; i>0; i-=5){
+    myServo.write(i);
+    delay(500);
+  }*/
+
+  
 
 
 
