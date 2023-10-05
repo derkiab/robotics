@@ -21,6 +21,9 @@ Servo myServo;
 //LED
 int green = 41;
 int red = 40;
+int r= 6;
+int b = 4;
+int g = 5;
 
 void adelante(){ //Función que hará que el robot avance hacia adelante
   digitalWrite(red, LOW);
@@ -30,6 +33,10 @@ void adelante(){ //Función que hará que el robot avance hacia adelante
   digitalWrite(m2, HIGH);
   analogWrite(e1, 150);
   analogWrite(e2, 150);
+
+  analogWrite(r, 255);
+  analogWrite(g, 255);
+  analogWrite(b, 0);
 }
 void izquierda(){ //Función que hará que el robot gire a la izquierda
   digitalWrite(red, LOW);
@@ -39,6 +46,10 @@ void izquierda(){ //Función que hará que el robot gire a la izquierda
   digitalWrite(m2, LOW);
   analogWrite(e1, 150);
   analogWrite(e2, LOW);
+
+  analogWrite(r, 254);
+  analogWrite(g, 52);
+  analogWrite(b, 126);
 }
 void derecha(){ //Función que hará que el robot gire hacia la derecha
   digitalWrite(red, LOW);
@@ -48,6 +59,10 @@ void derecha(){ //Función que hará que el robot gire hacia la derecha
   digitalWrite(m2, LOW);
   analogWrite(e1, LOW);
   analogWrite(e2, 150);
+
+  analogWrite(r, 0);
+  analogWrite(g, 0);
+  analogWrite(b, 255);
   
 }
 void detener(){ //Función que hará que el robot gire hacia la derecha
@@ -73,6 +88,10 @@ void setup() {
   pinMode(green, OUTPUT);
   pinMode(red, OUTPUT);
   myServo.attach(24);
+
+  pinMode(r, OUTPUT);
+  pinMode(g, OUTPUT);
+  pinMode(b, OUTPUT);
 }
 
 void loop() {
@@ -85,24 +104,30 @@ void loop() {
   delayMicroseconds(10);
   digitalWrite(trig, LOW);
 
+  
+
   float tiempo = pulseIn(echo, HIGH);
   tiempo= tiempo/2;
   float distancia = tiempo/29.2;
   Serial.println(distancia);
   if(left==0 && right ==0){ //Detección de si el robot se encuentra en la línea
-    if(distancia < 10){
+    if(distancia < 10){ //Detección de si hay un objeto frente al robot
       detener();
       digitalWrite(red, HIGH);
       digitalWrite(green, LOW);
       int i;
-      for(i=0; i<180; i+=20){
+
+      analogWrite(r, 255);
+      analogWrite(g, 255);
+      analogWrite(b, 255);
+      for(i=5; i<180; i+=20){
         myServo.write(i);
-        delay(500);
+        delay(200);
       }
 
-      for(i=180; i>0; i-=20){
+      for(i=180; i>5; i-=20){
         myServo.write(i);
-        delay(500);
+        delay(200);
       }
     }else{
       Serial.println("adelante");
@@ -112,11 +137,11 @@ void loop() {
   }else if(left ==1 && right==0){ //Detección de si el robot se encuentra a la derecha de la línea
     Serial.println("izquierda");
     izquierda();
-    delay(300);
+    delay(390);
   }else if(left == 0 && right==1){ //Detección de si el robot se encuentra a la izquierda de la línea
     Serial.println("derecha");
     derecha();
-    delay(300);
+    delay(390);
   }
 
   
