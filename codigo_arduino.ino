@@ -4,6 +4,7 @@
 //Sensores infrarrojos
 int ir1 = 34;
 int ir2 =35;
+int ir3 = 47;
 
 //Dual motor
 int e1 = 2;
@@ -81,6 +82,7 @@ void setup() {
   Serial.begin(9600);
   pinMode(ir1, INPUT);
   pinMode(ir2, INPUT);
+  pinMode(ir3, INPUT);
   pinMode(e1, OUTPUT);
   pinMode(e2, OUTPUT);
   pinMode(trig, OUTPUT);
@@ -98,6 +100,7 @@ void loop() {
   //Acciones a ejecutar por el robot
   int left = digitalRead(ir1); //Estado del sensor infrarrojo izquierdo
   int right = digitalRead(ir2); //Estado del sensor infrarrojo derecho
+  int center = digitalRead(ir3);
   digitalWrite(trig, LOW);
   delayMicroseconds(3);
   digitalWrite(trig, HIGH);
@@ -110,7 +113,7 @@ void loop() {
   tiempo= tiempo/2;
   float distancia = tiempo/29.2;
   Serial.println(distancia);
-  if(left==0 && right ==0){ //Detección de si el robot se encuentra en la línea
+  if((left==0 && right ==0)||center==1){ //Detección de si el robot se encuentra en la línea
     if(distancia < 10){ //Detección de si hay un objeto frente al robot
       detener();
       digitalWrite(red, HIGH);
