@@ -32,8 +32,8 @@ void adelante(){ //Función que hará que el robot avance hacia adelante
   
   digitalWrite(m1, HIGH);
   digitalWrite(m2, HIGH);
-  analogWrite(e1, 150);
-  analogWrite(e2, 150);
+  analogWrite(e1, 220);
+  analogWrite(e2, 220);
 
   analogWrite(r, 255);
   analogWrite(g, 255);
@@ -100,7 +100,7 @@ void loop() {
   //Acciones a ejecutar por el robot
   int left = digitalRead(ir1); //Estado del sensor infrarrojo izquierdo
   int right = digitalRead(ir2); //Estado del sensor infrarrojo derecho
-  int center = digitalRead(ir3);
+  int center = digitalRead(ir3); //Estado del sensor infrarrojo del centro
   digitalWrite(trig, LOW);
   delayMicroseconds(3);
   digitalWrite(trig, HIGH);
@@ -111,9 +111,9 @@ void loop() {
 
   float tiempo = pulseIn(echo, HIGH);
   tiempo= tiempo/2;
-  float distancia = tiempo/29.2;
+  float distancia = tiempo/29.2; //Cálculo de la distancia detectada por el ultrasonido
   Serial.println(distancia);
-  if((left==0 && right ==0)||center==1){ //Detección de si el robot se encuentra en la línea
+  if(left==1 && center==1){ //Detección de si el robot se encuentra en la línea
     if(distancia < 10){ //Detección de si hay un objeto frente al robot
       detener();
       digitalWrite(red, HIGH);
@@ -135,30 +135,24 @@ void loop() {
     }else{
       Serial.println("adelante");
       adelante();
+      
     }
 
-  }else if(left ==1 && right==0){ //Detección de si el robot se encuentra a la derecha de la línea
-    Serial.println("izquierda");
-    izquierda();
-    delay(390);
-  }else if(left == 0 && right==1){ //Detección de si el robot se encuentra a la izquierda de la línea
+  }else if(right ==1){
+    derecha();
+    delay(500);
+
+  }
+  
+  else if(left ==0 && center==1){ //Detección de si el robot se encuentra a la derecha de la línea
     Serial.println("derecha");
     derecha();
-    delay(390);
+    delay(100);
+  }else if(left == 1 && center==0){ //Detección de si el robot se encuentra a la izquierda de la línea
+    Serial.println("izquierda");
+    izquierda();
+    delay(100);
   }
-
-  
-
-  /*int i;
-  for(i=0; i<180; i+=5){
-    myServo.write(i);
-    delay(500);
-  }
-
-  for(i=180; i>0; i-=5){
-    myServo.write(i);
-    delay(500);
-  }*/
 
   
 
