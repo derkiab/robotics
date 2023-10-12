@@ -32,18 +32,18 @@ void adelante(){ //Función que hará que el robot avance hacia adelante
   
   digitalWrite(m1, HIGH);
   digitalWrite(m2, HIGH);
-  analogWrite(e1, 220);
-  analogWrite(e2, 220);
+  analogWrite(e1, 210);
+  analogWrite(e2, 210);
 
   analogWrite(r, 255);
   analogWrite(g, 255);
   analogWrite(b, 0);
 }
-void izquierda(){ //Función que hará que el robot gire a la izquierda
+void derecha(){ //Función que hará que el robot gire a la izquierda
   digitalWrite(red, LOW);
   digitalWrite(green, HIGH);
   
-  digitalWrite(m1, LOW);
+  digitalWrite(m1, HIGH);
   digitalWrite(m2, LOW);
   analogWrite(e1, 150);
   analogWrite(e2, LOW);
@@ -52,12 +52,12 @@ void izquierda(){ //Función que hará que el robot gire a la izquierda
   analogWrite(g, 52);
   analogWrite(b, 126);
 }
-void derecha(){ //Función que hará que el robot gire hacia la derecha
+void izquierda(){ //Función que hará que el robot gire hacia la derecha
   digitalWrite(red, LOW);
   digitalWrite(green, HIGH);
   
   digitalWrite(m1, LOW);
-  digitalWrite(m2, LOW);
+  digitalWrite(m2, HIGH);
   analogWrite(e1, LOW);
   analogWrite(e2, 150);
 
@@ -90,7 +90,7 @@ void setup() {
   pinMode(green, OUTPUT);
   pinMode(red, OUTPUT);
   myServo.attach(24);
-
+  myServo.write(0);
   pinMode(r, OUTPUT);
   pinMode(g, OUTPUT);
   pinMode(b, OUTPUT);
@@ -114,7 +114,7 @@ void loop() {
   float distancia = tiempo/29.2; //Cálculo de la distancia detectada por el ultrasonido
   Serial.println(distancia);
   if(left==1 && center==1){ //Detección de si el robot se encuentra en la línea
-    if(distancia < 10){ //Detección de si hay un objeto frente al robot
+    if(distancia < 10 && distancia >9.5){ //Detección de si hay un objeto frente al robot
       detener();
       digitalWrite(red, HIGH);
       digitalWrite(green, LOW);
@@ -123,12 +123,12 @@ void loop() {
       analogWrite(r, 255);
       analogWrite(g, 255);
       analogWrite(b, 255);
-      for(i=5; i<180; i+=20){
+      for(i=5; i<=180; i+=60){
         myServo.write(i);
         delay(200);
       }
 
-      for(i=180; i>5; i-=20){
+      for(i=180; i>=0; i-=60){
         myServo.write(i);
         delay(200);
       }
@@ -153,11 +153,6 @@ void loop() {
     izquierda();
     delay(100);
   }
-
-  
-
-
-
 
 
 }
